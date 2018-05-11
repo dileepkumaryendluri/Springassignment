@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+
+    <title>Spring Framework </title>
+
+    <!--/*/ <th:block th:include="fragments/headerinc :: head"></th:block> /*/-->
+</head>
+<body>
+<div class="container">
+    <!--/*/ <th:block th:include="fragments/header :: header"></th:block> /*/-->
+    <div th:if="${not #lists.isEmpty(users)}">
+        <h2>User List</h2>
+        <table class="table table-striped">
+            <tr>
+                <th>Id</th>
+                <th>UserName</th>
+                <th>Birthdate</th>
+                <th>Age</th>
+               
+            </tr>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}"><a href="/user/${user.id}">Id</a></td>
+                <td th:text="${user.userName}">UserName</td>
+                <td th:text="${user.birthdate}">Birthdate</td>
+                <td th:text="${user.age}">Age</td>
+            </tr>
+        </table>
+
+    </div>
+</div>
+
+</body>
+</html>

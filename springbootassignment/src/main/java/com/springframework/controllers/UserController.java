@@ -1,5 +1,7 @@
 package com.springframework.controllers;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,17 +31,16 @@ public class UserController {
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public String list(Model model){
         model.addAttribute("users", userService.listAllUsers());
-        System.out.println("Returning Users");
         return "users";
     }
 
-    @RequestMapping("user/{name}")
+    @RequestMapping(value="user/{name}", method = RequestMethod.GET)
     public String showUser(@PathVariable String name, Model model){
         model.addAttribute("user", userService.getuserByName(name));
         return "usershow";
     }
     
-    @RequestMapping("/{name}/birthday")
+    @RequestMapping(value="/{name}/birthday", method = RequestMethod.GET)
     @ResponseBody 
     public String getBirthday(@PathVariable String name){
       User user = userService.getuserByName(name);
@@ -47,7 +48,7 @@ public class UserController {
     }
     
     
-    @RequestMapping("/{name}/age")
+    @RequestMapping(value="/{name}/age", method = RequestMethod.GET)
     @ResponseBody 
     public Integer getAge(@PathVariable String name){
       User user = userService.getuserByName(name);
@@ -56,17 +57,24 @@ public class UserController {
     
     @RequestMapping(value = "/user", method = RequestMethod.POST) 
     @ResponseBody
-    public ResponseEntity<User> saveUser(@RequestBody User user){
+    public ResponseEntity<?> saveUser(@Valid @RequestBody User user) throws Exception{
+    	
+    	User user1 = userService.getuserByName(user.getUserName());
+    	 if (user1!=null) {
+    		 return new ResponseEntity<>("User already exist",HttpStatus.CONFLICT);
+    	 } 
     	
         userService.saveUser(user);
+    	 
 
         return new ResponseEntity<>(user,  HttpStatus.OK);
+        	
     }
     
     
-    @RequestMapping(value = "/user/{name}", method = RequestMethod.PUT)
+  	@RequestMapping(value = "/user/{name}", method = RequestMethod.PUT)
     @ResponseBody 
-    public ResponseEntity<User> updateUser(@PathVariable String name,@RequestBody User user){
+    public ResponseEntity<User> updateUser(@PathVariable String name, @Valid @RequestBody User user){
     	User user1 = userService.getuserByName(name);
     	user1.setAge(user.getAge());
     	user1.setBirthdate(user.getBirthdate());
